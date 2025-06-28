@@ -1,6 +1,7 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from db.session import Base, engine
+from api.auth import auth
 
 Base.metadata.create_all(bind=engine)
 
@@ -14,6 +15,4 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-@app.get("/")
-def read_root():
-    return {"message": "Welcome to Itemo!!"}
+app.include_router(auth.router)
