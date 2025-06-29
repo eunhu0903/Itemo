@@ -1,6 +1,7 @@
 from sqlalchemy.orm import Session
 from models.auth import User
 from schemas.auth import UserResponse
+from core.token import verify_token
 from core.security import create_access_token
 
 def get_or_create_user(email: str, username: str, oauth_id: str, db: Session) -> tuple[User, bool]:
@@ -38,3 +39,7 @@ def authenticate_with_google(google_userinfo: dict, db: Session) -> dict:
         "token_type": "Bearer",
         "user": UserResponse.model_validate(user)
     }
+
+def get_current_user(token: str, db: Session) -> User:
+    user = verify_token(token, db)
+    return user
