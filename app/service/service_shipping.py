@@ -19,3 +19,8 @@ def create_shipping_address(token: str, address_data: ShippingAddressesCreate, d
     db.commit()
     db.refresh(new_address)
     return new_address
+
+def read_shipping_address(token: str, db: Session):
+    user = verify_token(token, db)
+    address = db.query(ShippingAddress).filter(ShippingAddress.user_id == user.id).all()
+    return address
