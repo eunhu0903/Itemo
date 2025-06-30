@@ -1,0 +1,17 @@
+from fastapi import APIRouter, Depends
+from sqlalchemy.orm import Session
+from schemas.shipping import ShippingAddressesCreate
+from db.session import get_db
+from core.token import get_token_from_header
+from app.service.service_shipping import create_shipping_address
+
+router = APIRouter(tags=["Shipping-addresses"])
+
+@router.post("/shipping-addresses")
+def get_shipping_addr(
+    address_data: ShippingAddressesCreate,
+    token: str = Depends(get_token_from_header),
+    db: Session = Depends(get_db)
+):
+    new_address = create_shipping_address(token, address_data, db)
+    return {"message": "배송지가 등록되었습니다.", "shipping_address_id": new_address.id}
