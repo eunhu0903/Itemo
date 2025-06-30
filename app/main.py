@@ -2,7 +2,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from db.session import Base, engine
 from api.auth import auth, profile
-from app.api.address import shipping
+from api.shipping import shipping
 
 Base.metadata.create_all(bind=engine)
 

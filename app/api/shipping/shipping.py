@@ -3,7 +3,7 @@ from sqlalchemy.orm import Session
 from schemas.shipping import ShippingAddressesCreate
 from db.session import get_db
 from core.token import get_token_from_header
-from app.service.service_shipping import create_shipping_address
+from service.service_shipping import create_shipping_address
 
 router = APIRouter(tags=["Shipping-addresses"])
 

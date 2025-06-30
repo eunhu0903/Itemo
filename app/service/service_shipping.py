@@ -1,6 +1,6 @@
 from sqlalchemy.orm import Session 
 from schemas.shipping import ShippingAddressesCreate
-from app.models.shipping import ShippingAddress
+from models.shipping import ShippingAddress
 from core.token import verify_token
 
 def create_shipping_address(token: str, address_data: ShippingAddressesCreate, db: Session) -> ShippingAddress:
