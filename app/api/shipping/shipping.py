@@ -4,12 +4,12 @@ from schemas.shipping import ShippingAddressesCreate, ShippingAddressesResponse
 from db.session import get_db
 from core.token import get_token_from_header
 from typing import List
-from service.service_shipping import create_shipping_address, read_shipping_address
+from service.service_shipping import create_shipping_address, read_shipping_address, read_shipping_address_detail
 
 router = APIRouter(tags=["Shipping-addresses"])
 
 @router.post("/shipping-addresses")
-def post_shipping_addresses(
+def post_shipping_address(
     address_data: ShippingAddressesCreate,
     token: str = Depends(get_token_from_header),
     db: Session = Depends(get_db)
@@ -18,6 +18,11 @@ def post_shipping_addresses(
     return {"message": "배송지가 등록되었습니다.", "shipping_address_id": new_address.id}
 
 @router.get("/shipping-addresses", response_model=List[ShippingAddressesResponse])
-def get_shipping_addresses(token: str = Depends(get_token_from_header), db: Session = Depends(get_db)):
+def get_shipping_address(token: str = Depends(get_token_from_header), db: Session = Depends(get_db)):
     address = read_shipping_address(token, db)
+    return address
+
+@router.get("/shipping-addresses/{address_id}", response_model=ShippingAddressesResponse)
+def get_shipping_address_detail(address_id: int, token: str = Depends(get_token_from_header), db: Session = Depends(get_db)):
+    address = read_shipping_address_detail(token, address_id, db)
     return address
