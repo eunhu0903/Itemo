@@ -56,3 +56,15 @@ def update_shipping_address(token: str, address_id: int, address_data: ShippingA
     db.commit()
     db.refresh(address)
     return address
+
+def delete_shipping_address(token: str, address_id: int, db: Session) -> None:
+    user = verify_token(token, db)
+
+    address = (
+        db.query(ShippingAddress)
+        .filter(ShippingAddress.id == address_id, ShippingAddress.user_id == user.id)
+        .first()
+    )
+
+    if not address:
+        raise HTTPException(status_code=404, detail="배송지를 찾을 수 없습니다.")
