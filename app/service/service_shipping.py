@@ -68,3 +68,25 @@ def delete_shipping_address(token: str, address_id: int, db: Session) -> None:
 
     if not address:
         raise HTTPException(status_code=404, detail="배송지를 찾을 수 없습니다.")
+    
+def set_default_shipping_address(token: str, address_id: int, db: Session) -> ShippingAddress:
+    user = verify_token(token, db)
+
+    db.query(ShippingAddress).filter(
+        ShippingAddress.user_id == user.id,
+        ShippingAddress.is_default == True
+    ).update({ShippingAddress.is_default: False})
+
+    address = db.query(ShippingAddress).filter(
+        ShippingAddress.id == address_id,
+        ShippingAddress.user_id == user.id
+    ).first()
+
+    if not address:
+        raise HTTPException(status_code=404, detail="배송지를 찾을 수 없습니다.")
+    
+    address.is_default == True
+
+    db.commit()
+    db.refresh(address)
+    return address
