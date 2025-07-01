@@ -1,4 +1,5 @@
 from pydantic import BaseModel
+from typing import Optional
 
 class ShippingAddressesCreate(BaseModel):
     recipient: str
@@ -17,3 +18,10 @@ class ShippingAddressesResponse(BaseModel):
 
     class Config:
         from_attributes = True
+
+class ShippingAddressesUpdate(BaseModel):
+    recipient: Optional[str] = None
+    phone_number: Optional[str] = None
+    address: Optional[str] = None
+    detail_address: Optional[str] = None
+    postal_code: Optional[str] = None
