@@ -5,6 +5,7 @@ class UserResponse(BaseModel):
     id: int
     email: EmailStr
     username: Optional[str]
+    profile_image: Optional[str]
     is_active: bool
 
     class Config:
