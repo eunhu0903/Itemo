@@ -1,10 +1,10 @@
 from fastapi import APIRouter, Depends
 from sqlalchemy.orm import Session
-from schemas.shipping import ShippingAddressesCreate, ShippingAddressesResponse
+from schemas.shipping import ShippingAddressesCreate, ShippingAddressesResponse, ShippingAddressesUpdate
 from db.session import get_db
 from core.token import get_token_from_header
 from typing import List
-from service.service_shipping import create_shipping_address, read_shipping_address, read_shipping_address_detail
+from service.service_shipping import create_shipping_address, read_shipping_address, read_shipping_address_detail, update_shipping_address
 
 router = APIRouter(tags=["Shipping-addresses"])
 
@@ -25,4 +25,14 @@ def get_shipping_address(token: str = Depends(get_token_from_header), db: Sessio
 @router.get("/shipping-addresses/{address_id}", response_model=ShippingAddressesResponse)
 def get_shipping_address_detail(address_id: int, token: str = Depends(get_token_from_header), db: Session = Depends(get_db)):
     address = read_shipping_address_detail(token, address_id, db)
+    return address
+
+@router.patch("/shipping-addresses/{address_id}", response_model=ShippingAddressesResponse)
+def patch_shipping_address(
+    address_id: int,
+    address_data: ShippingAddressesUpdate,
+    token: str = Depends(get_token_from_header),
+    db: Session = Depends(get_db)
+):
+    address = update_shipping_address(token, address_id, address_data, db)
     return address
