@@ -1,6 +1,6 @@
 from fastapi import HTTPException
 from sqlalchemy.orm import Session 
-from schemas.shipping import ShippingAddressesCreate
+from schemas.shipping import ShippingAddressesCreate, ShippingAddressesUpdate
 from models.shipping import ShippingAddress
 from core.token import verify_token
 
@@ -36,4 +36,23 @@ def read_shipping_address_detail(token: str, address_id: int, db: Session) -> Sh
     )
     if not address:
         raise HTTPException(status_code=404, detail="배송지를 찾을 수 없습니다.")
+    return address
+
+def update_shipping_address(token: str, address_id: int, address_data: ShippingAddressesUpdate, db: Session) -> ShippingAddress:
+    user = verify_token(token, db)
+    address = (
+        db.query(ShippingAddress)
+        .filter(ShippingAddress.id == address_id, ShippingAddress.user_id == user.id)
+        .first()
+    )
+
+    if not address:
+        raise HTTPException(status_code=404, detail="배송지를 찾을 수 없습니다.")
+    
+    update_data = address_data.dict(exclude_unset=True)
+    for key, value in update_data.items():
+        setattr(address, key, value)
+    
+    db.commit()
+    db.refresh(address)
     return address
