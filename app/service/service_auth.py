@@ -18,7 +18,7 @@ def get_or_create_user(email: str, username: str, oauth_id: str, profile_image: 
         username=username,
         oauth_id=oauth_id,
         oauth_provider="google",
-        profile_image=profile_image,
+        google_profile_image=profile_image,
         is_active=True,
         is_admin=False,
     )
@@ -47,4 +47,5 @@ def authenticate_with_google(google_userinfo: dict, db: Session, profile_image: 
 
 def get_current_user(token: str, db: Session) -> User:
     user = verify_token(token, db)
+    user.profile_image = user.profile_image or user.google_profile_image
     return user
