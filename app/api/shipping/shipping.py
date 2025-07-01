@@ -4,7 +4,7 @@ from schemas.shipping import ShippingAddressesCreate, ShippingAddressesResponse,
 from db.session import get_db
 from core.token import get_token_from_header
 from typing import List
-from service.service_shipping import create_shipping_address, read_shipping_address, read_shipping_address_detail, update_shipping_address
+from service.service_shipping import create_shipping_address, read_shipping_address, read_shipping_address_detail, update_shipping_address, delete_shipping_address
 
 router = APIRouter(tags=["Shipping-addresses"])
 
@@ -36,3 +36,12 @@ def patch_shipping_address(
 ):
     address = update_shipping_address(token, address_id, address_data, db)
     return address
+
+@router.delete("/shipping-addresses/{address_id}")
+def delete_shipping_address_api(
+    address_id: int,
+    token: str = Depends(get_token_from_header),
+    db: Session = Depends(get_db)
+):
+    delete_shipping_address(token, address_id, db)
+    return {"message": "배송지가 삭제되었습니다."}
