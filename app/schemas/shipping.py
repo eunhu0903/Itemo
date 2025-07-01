@@ -15,6 +15,7 @@ class ShippingAddressesResponse(BaseModel):
     address: str
     detail_address: str
     postal_code: str
+    is_default: bool
 
     class Config:
         from_attributes = True
