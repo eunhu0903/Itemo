@@ -85,7 +85,7 @@ def set_default_shipping_address(token: str, address_id: int, db: Session) -> Sh
     if not address:
         raise HTTPException(status_code=404, detail="배송지를 찾을 수 없습니다.")
     
-    address.is_default == True
+    address.is_default = True
 
     db.commit()
     db.refresh(address)
