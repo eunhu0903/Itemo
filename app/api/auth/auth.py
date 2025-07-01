@@ -24,7 +24,8 @@ async def callback_google(code: str, db: Session = Depends(get_db)):
 
         google_user = await get_google_userinfo(access_token)
 
-        auth_result = authenticate_with_google(google_user, db)
+        profile_image = google_user.get("picture")
+        auth_result = authenticate_with_google(google_user, db, profile_image=profile_image)
 
         return auth_result
     except Exception as e:
