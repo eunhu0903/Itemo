@@ -4,7 +4,7 @@ from schemas.shipping import ShippingAddressesCreate, ShippingAddressesResponse,
 from db.session import get_db
 from core.token import get_token_from_header
 from typing import List
-from service.service_shipping import create_shipping_address, read_shipping_address, read_shipping_address_detail, update_shipping_address, delete_shipping_address
+from service.service_shipping import create_shipping_address, read_shipping_address, read_shipping_address_detail, update_shipping_address, delete_shipping_address, set_default_shipping_address
 
 router = APIRouter(tags=["Shipping-addresses"])
 
@@ -23,7 +23,11 @@ def get_shipping_address(token: str = Depends(get_token_from_header), db: Sessio
     return address
 
 @router.get("/shipping-addresses/{address_id}", response_model=ShippingAddressesResponse)
-def get_shipping_address_detail(address_id: int, token: str = Depends(get_token_from_header), db: Session = Depends(get_db)):
+def get_shipping_address_detail(
+    address_id: int, 
+    token: str = Depends(get_token_from_header), 
+    db: Session = Depends(get_db)
+):
     address = read_shipping_address_detail(token, address_id, db)
     return address
 
@@ -36,6 +40,15 @@ def patch_shipping_address(
 ):
     address = update_shipping_address(token, address_id, address_data, db)
     return address
+
+@router.patch("/shipping-addresses/{address_id}/default", response_model=ShippingAddressesResponse)
+def patch_default_shipping_address(
+    address_id: int, 
+    token: str = Depends(get_token_from_header), 
+    db: Session = Depends(get_db)
+):
+    updated = set_default_shipping_address(token, address_id, db)
+    return updated
 
 @router.delete("/shipping-addresses/{address_id}")
 def delete_shipping_address_api(
