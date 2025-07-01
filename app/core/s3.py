@@ -20,13 +20,12 @@ s3_client = boto3.client(
     region_name=AWS_REGION,
 )
 
-def upload_fileobj(file_obj, bucket_name: str, object_name: str) -> str | None:
+def upload_fileobj(file_obj, object_name: str, bucket_name: str = BUCKET_NAME) -> str | None:
     try:
         s3_client.upload_fileobj(
             Fileobj=file_obj,
             Bucket=bucket_name,
             Key=object_name,
-            ExtraArgs={'ACL': 'public-read'}
         )
         url = f"https://{bucket_name}.s3.{AWS_REGION}.amazonaws.com/{object_name}"
         return url
