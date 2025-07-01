@@ -2,7 +2,8 @@ from fastapi import UploadFile, HTTPException
 from sqlalchemy.orm import Session
 from models.auth import User
 from core.token import verify_token
-from core.s3 import upload_fileobj
+from core.s3 import upload_fileobj, delete_object, BUCKET_NAME
+from urllib.parse import urlparse
 import uuid
 
 def get_my_profile(token: str, db: Session) -> User:
@@ -31,6 +32,18 @@ def upload_profile_image(user: User, file: UploadFile, db: Session) -> User:
         raise HTTPException(status_code=500, detail="이미지 업로드 실패")
     
     user.profile_image = image_url
+    db.commit()
+    db.refresh(user)
+    return user
+
+def delete_profile_image(user: User, db: Session) -> User:
+    if not user.profile_image:
+        raise HTTPException(status_code=400, detail="삭제할 프로필 이미지가 없습니다.")
+    
+    object_key = urlparse(user.profile_image).path.lstrip('/')
+    delete_object(object_name=object_key, bucket_name=BUCKET_NAME)
+
+    user.profile_image = None
     db.commit()
     db.refresh(user)
     return user
