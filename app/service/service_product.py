@@ -67,4 +67,14 @@ def update_product(products_id: int, name: str, description: str, price: float, 
     db.commit()
     db.refresh(product)
     return product
+
+def delete_product(products_id, seller_id: User, db: Session):
+    product = db.query(Product).filter(Product.id == products_id).first()
+
+    if not product:
+        raise HTTPException(status_code=404, detail="해당 상품을 찾을 수 없습니다.")
+    if product.seller_id != seller_id.id:
+        raise HTTPException(status_code=403, detail="상품 삭제 권한이 없습니다.")
     
+    db.delete(product)
+    db.commit()
