@@ -1,9 +1,11 @@
 import uuid
 from fastapi import UploadFile, HTTPException
 from sqlalchemy.orm import Session
+from typing import List
 from models.product import Product
 from models.auth import User
 from core.s3 import upload_fileobj
+
 
 def create_product(name: str, description: str, price: int, image: UploadFile, user: User, db: Session) -> Product:
     if not image.content_type.startswith("image/"):
@@ -27,4 +29,8 @@ def create_product(name: str, description: str, price: int, image: UploadFile, u
     db.add(product)
     db.commit()
     db.refresh(product)
+    return product
+
+def read_all_product(db: Session) -> List[Product]:
+    product = db.query(Product).all()
     return product
