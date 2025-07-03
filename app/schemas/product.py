@@ -15,3 +15,8 @@ class ProductResponse(BaseModel):
 
     class Config:
         from_attributes = True
+
+class ProductUpdate(BaseModel):
+    name: Optional[str]
+    description: Optional[str]
+    price: Optional[float]
