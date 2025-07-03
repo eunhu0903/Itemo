@@ -4,7 +4,7 @@ from core.token import verify_token, get_token_from_header
 from db.session import get_db
 from typing import List
 from schemas.product import ProductResponse, ProductUpdate
-from service.service_product import create_product, read_all_product, read_product, update_product
+from service.service_product import create_product, read_all_product, read_product, update_product, delete_product
 
 router = APIRouter(tags=["Product"])
 
@@ -32,7 +32,7 @@ def get_product(products_id: int, db: Session = Depends(get_db)):
     return product
 
 @router.put("/products/{products_id}", response_model=ProductResponse)
-def put_products(
+def put_product(
     products_id: int = Path(...), 
     name: str = Form(...), 
     description: str = Form(...), 
@@ -44,3 +44,13 @@ def put_products(
     user = verify_token(token, db)
     product = update_product(products_id, name, description, price, image, user, db)
     return product
+
+@router.delete("/products/{products_id}")
+def delete_product_api(
+    products_id: int,
+    token: str = Depends(get_token_from_header),
+    db: Session = Depends(get_db)
+):
+    user = verify_token(token, db)
+    delete_product(products_id, user, db)
+    return {"message": "상품이 성공적으로 삭제되었습니다."}
