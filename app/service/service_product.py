@@ -34,3 +34,9 @@ def create_product(name: str, description: str, price: int, image: UploadFile, u
 def read_all_product(db: Session) -> List[Product]:
     product = db.query(Product).all()
     return product
+
+def read_product(products_id: int, db: Session) -> Product:
+    product = db.query(Product).filter(Product.id == products_id).first()
+    if not product:
+        raise HTTPException(status_code=404, detail="해당 상품을 찾을 수 없습니다.")
+    return product
