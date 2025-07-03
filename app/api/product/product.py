@@ -4,7 +4,7 @@ from core.token import verify_token, get_token_from_header
 from db.session import get_db
 from typing import List
 from schemas.product import ProductResponse
-from service.service_product import create_product, read_all_product
+from service.service_product import create_product, read_all_product, read_product
 
 router = APIRouter(tags=["Product"])
 
@@ -24,4 +24,9 @@ def post_product(
 @router.get("/products", response_model=List[ProductResponse])
 def get_all_product(db: Session = Depends(get_db)):
     product = read_all_product(db)
+    return product
+
+@router.get("/products/{products_id}", response_model=ProductResponse)
+def get_product(products_id: int, db: Session = Depends(get_db)):
+    product = read_product(products_id, db)
     return product
