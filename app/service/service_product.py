@@ -42,6 +42,10 @@ def read_product(products_id: int, db: Session) -> Product:
         raise HTTPException(status_code=404, detail="해당 상품을 찾을 수 없습니다.")
     return product
 
+def read_my_product(user: User, db: Session) -> List[Product]:
+    product = db.query(Product).filter(Product.seller_id == user.id).all()
+    return product
+
 def update_product(products_id: int, name: str, description: str, price: float, image: UploadFile | None, seller_id: User, db: Session):
     product = db.query(Product).filter(Product.id == products_id).first()
     if not product:
