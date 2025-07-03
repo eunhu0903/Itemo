@@ -3,8 +3,8 @@ from sqlalchemy.orm import Session
 from core.token import verify_token, get_token_from_header
 from db.session import get_db
 from typing import List
-from schemas.product import ProductResponse, ProductUpdate
-from service.service_product import create_product, read_all_product, read_product, update_product, delete_product
+from schemas.product import ProductResponse
+from service.service_product import create_product, read_all_product, read_product, update_product, delete_product, read_my_product
 
 router = APIRouter(tags=["Product"])
 
@@ -24,6 +24,12 @@ def post_product(
 @router.get("/products", response_model=List[ProductResponse])
 def get_all_product(db: Session = Depends(get_db)):
     product = read_all_product(db)
+    return product
+
+@router.get("/products/me", response_model=List[ProductResponse])
+def get_my_product(token: str = Depends(get_token_from_header), db: Session = Depends(get_db)):
+    user = verify_token(token, db)
+    product = read_my_product(user, db)
     return product
 
 @router.get("/products/{products_id}", response_model=ProductResponse)
